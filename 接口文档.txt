@@ -1,0 +1,43 @@
+//配置路由
+var dv=angular.module("configApp",["ngStorage", "ngRoute"]);
+dv.factory('dataService', function( $sessionStorage, $localStorage, $location) {
+	var urlRoot='http://192.168.11.25:8081/divideclass/';
+	//var urlRoot='http://localhost/divideclass/';
+	//10. 登录
+	var urlLogin=urlRoot+'user/UserMainAction.a?login';
+	//1. 登录后的首页获取
+	var urlLoginIndex=urlRoot+'request/RequestAction.a?requestList';
+	//2. 设置分班规则-列出规则
+	var urlRuleList=urlRoot+'request/RequestAction.a?requestRuleList';
+	//3. 设置分班规则-设置规则
+	var urlRuleSet=urlRoot+'request/RequestAction.a?requestRuleSet';
+	//4. 上传文件-是否允许上传
+	var urlCanUpload=urlRoot+'request/RequestAction.a?canUpload';
+	//5. 上传文件-上传
+	var urlUpload=urlRoot+'upload/UploadAction.a';
+	//6. 验证用户名是否存在
+	var urlCheckLoginName=urlRoot+'user/UserMainAction.a?checkLoginName';
+	//7. 发送短信验证码
+	var urlSendMsgCode=urlRoot+'user/UserMainAction.a?sendMsgCode';
+	//8. 检查验证码
+	var urlCheckCode=urlRoot+'user/UserMainAction.a?checkCode';
+	//9. 注册
+	var urlRegister=urlRoot+'user/UserMainAction.a?register';
+	//11. 重置密码
+	var urlResetPassword=urlRoot+'user/UserMainAction.a?resetPassword';
+	//12. 获取分班结果(开始分班，重新分班)
+	var urlFindResultDifference=urlRoot+'result/ClassResultAction.a?findResultDifference';
+	//13. 下载
+	var urlDownloadResult=urlRoot+'result/ClassResultAction.a?downloadResult';
+	//14. 收藏
+	var urlCollectResult=urlRoot+'result/ClassResultAction.a?collectResult';
+	//15. 详情
+	var urlFindResultDetail=urlRoot+'result/ClassResultAction.a?findResultDetail';
+	//16. 停止
+	var urlStopDivide=urlRoot+'result/ClassResultAction.a?stopDivide';
+	//17. 重新分班
+	var urlRestartDivide=urlRoot+'result/ClassResultAction.a?restartDivide';
+	//18. 获取分班状态
+	var urlFindDivideStatus=urlRoot+'result/ClassResultAction.a?findDivideStatus';
+	//获取统计数据
+	var urlFindStatistics=urlRoot+'upload/UploadAction.a?findStatistics';
