@@ -1,28 +1,29 @@
 <template>
-  <div class="hello">
-    <el-button type="success" id='zhuyao' @click='xianshi'>我要分班</el-button>
-    <div v-text='msg'></div>
-    <!--登录窗口-->
-      <el-dialog v-model="loginPage" size="tiny" top='20%' class='loginWin'>
-      <Login></Login>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-button @click="loginPage = false">取 消</el-button>
-        <el-button type="primary" @click="loginPage = false">确 定</el-button>
-      </span> -->
-    </el-dialog>
-  </div>
+  <section>
+    <myHeader :isLogins='isLogin'></myHeader>
+    <div class="hello">
+      <el-button type="success" id='zhuyao' @click='xianshi'>我要分班</el-button>
+      <div v-text='msg'></div>
+      <!--登录窗口-->
+        <el-dialog v-model="loginPage" size="tiny" top='20%' class='loginWin'>
+          <Login></Login>
+        </el-dialog>
+    </div>
+    <myFooter></myFooter>
+  </section>
 </template>
 
 <script>
-
-import Login from './Login'
+import myHeader from './subComponents/Header'
+import myFooter from './subComponents/Footer'
+import Login from './subComponents/Login'
 export default {
-  components:{ Login },
-  name: 'hello',
+  components:{ Login, myHeader, myFooter},
   data () {
     return {
       msg: '使用本服务分班，能实现各班各类学生人数均等（最多差1）、各科成绩均衡（班级平均分差小于0.2）。',
-      loginPage:false
+      loginPage:false,
+      isLogin:false
     }
   },
   methods:{

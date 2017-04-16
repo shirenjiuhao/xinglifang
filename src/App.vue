@@ -1,28 +1,16 @@
 <template>
   <div id="app">
-    <myHeader></myHeader>
     <router-view></router-view>
-    <myFooter></myFooter>
   </div>
 </template>
 
 <script>
-import myHeader from './components/Header'
-import myFooter from './components/Footer'
-
 export default {
   name: 'app',
   data(){
     return {
       msg:''
     }
-  },
-  methods:{
-    
-  },
-  components:{
-    myHeader,
-    myFooter
   }
 }
 </script>

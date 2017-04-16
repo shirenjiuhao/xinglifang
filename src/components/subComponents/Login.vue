@@ -17,6 +17,7 @@
 	</section>
 </template>
 <script>
+    import { loginUser } from '../../api/api'
 	import axios from 'axios'
 	import qs from 'qs'
 	export default {
@@ -67,7 +68,6 @@
 		        	}).then(res => {
 		            	console.log(res)
 		            	this.loading = false;
-		            	this.isUser = true;
 		            	this.username = 'Hello world!'
 		            }).catch(err => {console.log(err);this.loading = false})
 		          } else {
@@ -87,14 +87,6 @@
 			}
 		},
 		mounted(){
-			var a = localStorage.length
-			if(a){
-				for(let i=0;i<a;i++){
-					console.log(i)
-					var user = localStorage.getItem(i)
-					console.log(user)
-				}
-			}
 		}
 	}
 </script>	
