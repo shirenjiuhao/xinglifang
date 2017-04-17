@@ -9,12 +9,22 @@ import router from './router'
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+  //NProgress.start();
+  if (to.path == '/') {
+    localStorage.removeItem('user');
+  }
+  let user = JSON.parse(localStorage.getItem('user'));
+  if (!user && to.path != '/') {
+    next({ path: '/' })
+  } else {
+    next()
+  }
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   template: '<App/>',
   components: { App }
-}).$emit('#zhuyao','click',function(){
-      console.log(1)
-    })
+})

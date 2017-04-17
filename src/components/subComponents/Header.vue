@@ -5,9 +5,9 @@
 	      <nav class="nav">
 	        <a href="#" class="logo"><img src="../../assets/logo.png" alt="品牌" /></a>
 	        <div class="user-info">
-	          <a href="/">首页</a>
-	          <span v-if='isLogins'>用户:{{username}}</span>
-	          <a href="#" @click='logout' v-if='isLogins'>退出</a>
+	          <a href="#/index">首页</a>
+	          <span v-if='isLogins'>用户： {{username}}</span>
+	          <a @click='logout' v-if='isLogins'>退出</a>
 	          <div class="login-b login" @click='login' v-if='!isLogins'>登录</div>
 	          <div class="login-b" @click='regist' v-if='!isLogins'>注册</div>
 	        </div>
@@ -15,7 +15,7 @@
 	    </header>
 	    <!--登录窗口-->
 	    <el-dialog v-model="loginPage" size="tiny" top='20%' class='loginWin'>
-   		  <Login></Login>
+   		  <slot name='login'></slot>
    		</el-dialog>
 		<!--注册窗口-->
 		<el-dialog title="注册" v-model="registPage" size="tiny">
@@ -24,14 +24,14 @@
 	</section>
 </template>
 <script>
-	import Login from './Login'
+    import { logoutUser } from '../../api/api'
 	import Register from './Register'
 	export default {
-	  components:{ Login, Register },
+	  components:{ Register },
 	  props:['isLogins'],
 	  data(){ 
 		  return {
-		    username: 'hello',
+		    username: '',
 		   	loginPage:false,//是否显示登录界面
 		   	registPage:false,//是否显示注册页面
 		  }
@@ -39,7 +39,7 @@
 		methods: {
 		  logout(){
 		  	this.$confirm('确认退出吗?', '提示', {
-				type: 'warning'
+				//type: 'warning'
 			}).then(() => {
 				this.$router.push('/');
 				localStorage.clear();
@@ -54,6 +54,13 @@
 		  resetForm(formName) {//重置表单
 	        this.$refs[formName].resetFields();
 	      }
+		},
+		mounted() {
+			let user = localStorage.getItem('user');
+			if(user){
+				user = JSON.parse(user);
+				this.username = user.mobile || '';
+			}
 		}
 	}
 </script>
@@ -62,7 +69,7 @@
     color:#fff;
     .nav{
 		display: flex;height:70px;justify-content: space-between;align-items: center;
-		background: #1F2D3D;color:#fff;padding: 0 20px;box-shadow: 0 1px 2px #646464;
+		background: #1F2D3D;color:#fff;padding: 0 50px;box-shadow: 0 1px 2px #646464;
 		.logo{
 			display: block;height: 36px;
 			img{height: 100%;}
@@ -70,7 +77,7 @@
 		.user-info{
 			display: flex;justify-content: center;align-items: center;
 			span{ margin:0 20px; }
-			a{color:#fff;}
+			a{color:#fff;cursor: pointer;}
 			a:hover{color:#29F28A;}
 			.login-b{width:80px;text-align: center;line-height:36px;
 				border: 1px solid #29F28A;color:#29F28A;cursor:pointer;

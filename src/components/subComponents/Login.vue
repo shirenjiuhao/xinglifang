@@ -7,7 +7,7 @@
 		  <el-form-item prop="pass">
 		    <el-input type="password" placeholder="请输入密码" icon='' v-model="loginForm2.pass" auto-complete="off"></el-input>
 		  </el-form-item>
-		      <el-radio label="记住密码" v-model="resource" @change='resourceChange'></el-radio>
+		      <el-checkbox v-model="resource" @change='resourceChange'>记住密码</el-checkbox>
 		      <span class="forget"><a href="/">忘记密码</a></span>
 		  <el-form-item>
 		    <el-button class='loginBtn' type="primary" @click="submitLogin('loginForm2')" :loading="loading">登录</el-button>
@@ -21,11 +21,10 @@
 	import axios from 'axios'
 	import qs from 'qs'
 	export default {
-		name:'login',
 		data(){
 			return {
 				loading:false,//是否正在请求
-				resource:false,//是否记住密码
+				resource:true,//是否记住密码
 				//登录表单
 			   	loginForm2:{
 			   		username:'',
@@ -42,33 +41,25 @@
 		        this.$refs[formName].validate((valid) => {
 		          if (valid) {
 		          	this.loading = true;
-		            console.log(this.loginForm2);
+		            //console.log(this.loginForm2);
 		            //let params = Object.assign({},this.loginForm2);
 		            let params = {
 		            	mobile: this.loginForm2.username,
 		            	password: this.loginForm2.pass
 		            }
-		            //params = qs.stringify(params)
-		            axios({url:'/divideclass/user/UserMainAction.a?login',
-		            	method: 'post',
-		            	data: params,
-						transformRequest: [function (data) {
-						    // Do whatever you want to transform the data
-						    let ret = ''
-						    for (let it in data) {
-						      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-						    }
-						    return ret
-						}],
-						headers:{
-							'Content-Type': 'application/x-www-form-urlencoded'
-							/*'Content-Type':'multipart/form-data'*/
-							/* 'Content-Type':'application/Body-raw'*/
-						}
-		        	}).then(res => {
+		            loginUser(params).then(res => {
 		            	console.log(res)
-		            	this.loading = false;
-		            	this.username = 'Hello world!'
+		            	if(res.result !=0){
+		            		this.$notify({
+			                  title: '错误',
+			                  message: res.failedReason,
+			                  type: 'error'
+			                });
+		            	}else{
+		            		params.token = res.data.token;
+			            	localStorage.setItem('user',JSON.stringify(params));
+			            	this.$router.push('/index');
+		            	}
 		            }).catch(err => {console.log(err);this.loading = false})
 		          } else {
 		            console.log('error submit!!');
@@ -77,16 +68,18 @@
 		        });
 			},
 			resourceChange(){
-				if(this.resource && this.loginForm2.username && this.loginForm2.pass){
-					let param = {
-						username: this.loginForm2.username,
-						password: this.loginForm2.pass
-					}
-					localStorage.setItem(param.username,param)
+				if(!this.resource){
+					localStorage.clear();
 				}
 			}
 		},
 		mounted(){
+			let user = localStorage.getItem('user');
+			if(user){
+				user = JSON.parse(user);
+				this.loginForm2.username = user.mobile;
+				this.loginForm2.pass = user.password
+			}
 		}
 	}
 </script>	

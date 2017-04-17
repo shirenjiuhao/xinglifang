@@ -21,8 +21,8 @@
 	</section>
 </template>
 <script>
+	import { registerUser, registerSendCode } from '../../api/api'
 	import axios from 'axios'
-	import qs from 'qs'
 	export default {
 		data(){
 			return {
@@ -47,28 +47,27 @@
 		      		mobile: this.registForm.username,
 		      		type:1
 		      	}
-		      	axios({
-		      		url: '/divideclass/user/UserMainAction.a?sendMsgCode',
-		      		method:'post',
-		      		data: params,
-		      		transformRequest: [function (data) {
-					    // Do whatever you want to transform the data
-					    let ret = ''
-					    for (let it in data) {
-					      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-					    }
-					    return ret
-					}],
-					headers:{
-						'Content-Type': 'application/x-www-form-urlencoded'
-						/*'Content-Type':'multipart/form-data'*/
-						/* 'Content-Type':'application/Body-raw'*/
-					}
-		      	}).then(res => {
-		      		console.log(res.data)
+		      	registerSendCode(params).then(res => {
+		      		console.log(res)
+		      		if(res.result !=0){
+	            		this.$notify({
+		                  title: '错误',
+		                  message: res.failedReason,
+		                  type: 'error'
+		                });
+	            	}else{
+	            		this.$notify({
+		                  title: '成功',
+		                  message: '发送成功',
+		                  type: 'success'
+		                });
+	            	}
 		      	})
 		      },
 		      checkCode(){//检查验证码
+		      	if(this.registForm.yangzhengma ==''){
+		      		return false;
+		      	}
 		      	let params = {
 		      		mobile: this.registForm.username,
 		      		msgCode: this.registForm.yangzhengma
@@ -106,26 +105,16 @@
 			            	password: this.registForm.pass,
 			            	msgCode: this.registForm.yangzhengma
 			            }
-			            axios({
-			            	url:'/divideclass/user /UserMainAction.a?register',
-			            	method:'post',
-			            	data:params,
-			            	transformRequest: [function (data) {
-						    // Do whatever you want to transform the data
-							    let ret = ''
-							    for (let it in data) {
-							      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-							    }
-							    return ret
-							}],
-							headers:{
-								'Content-Type': 'application/x-www-form-urlencoded'
-								/*'Content-Type':'multipart/form-data'*/
-								/* 'Content-Type':'application/Body-raw'*/
-							}
-			            }).then(res => {
+			            registerUser(params).then(res => {
 			            	this.loading = false;
-			            	console.log(res.data)
+			            	console.log(res)
+			            	let user = {
+			            		mobile:params.mobile,
+			            		password:params.password
+			            	};
+			            	user.token = res.data.token;
+			            	localStorage.setItem('user',JSON.stringify(user))
+			            	this.$router.push('/index')
 			            }).catch(err => {
 			            	console.log(err);
 			            	this.loading = false;
@@ -139,6 +128,6 @@
 	}
 </script>
 <style scoped>
-	.myInput{width:256px;}
+	.myInput{width:248px;}
 	.registBtn{width:100%;}
 </style>

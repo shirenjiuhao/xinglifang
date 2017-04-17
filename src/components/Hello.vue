@@ -1,8 +1,10 @@
 <template>
   <section>
-    <myHeader :isLogins='isLogin'></myHeader>
+    <myHeader :isLogins='isLogin'>
+      <Login slot='login'></Login>
+    </myHeader>
     <div class="hello">
-      <el-button type="success" id='zhuyao' @click='xianshi'>我要分班</el-button>
+      <el-button type="success" @click='xianshi'>我要分班</el-button>
       <div v-text='msg'></div>
       <!--登录窗口-->
         <el-dialog v-model="loginPage" size="tiny" top='20%' class='loginWin'>
