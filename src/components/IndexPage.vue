@@ -34,7 +34,7 @@
     	methods:{
     		getList(options){
     			requestGetList(options).then(res => {
-    				console.log(res);
+    				//console.log(res);
     				this.lists = res.data;
     			})	
     		},
@@ -47,9 +47,8 @@
     				requestID: id,
     				requestName: name
     			}
-    			this.$router.params = Object.assign({},param);
-    			console.log(this.$router.params)
-    			this.$router.push('/check')
+    			//console.log(this.$router.params)
+    			this.$router.push(`/check/${param.requestID}`)
     		},
     	},
     	mounted(){

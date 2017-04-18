@@ -13,7 +13,7 @@ export default new Router({
   		{path: '/', component: Hello},
   		{path: '/404', component: NotFound},
   		{path: '/index', component: IndexPage},
-  		{path: '/check', component: Result},
+  		{path: '/check/:id', component: Result},
   		{path: '/startClass', component: StartClass},
   		{path: '*', redirect: { path: '/404' }}
     ]
