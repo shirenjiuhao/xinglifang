@@ -141,16 +141,10 @@ export const collectResultClassInfo = params => { return axios({
 }).then(res => res.data)};
 //上传文件
 export const uploadFile = params => { return axios({
-	url: '/divideclass/request/RequestAction.a?upload',data: params,method: 'post',
-	transformResponse: [function (data) {
-    // 这里提前处理返回的数据
-
-     return data;
-    }],
-
+	url: '/divideclass/upload/UploadAction.a', data: params, method: 'post',
 	headers:{
-		'Content-Type': 'application/x-www-form-urlencoded'
-		/*'Content-Type': 'multipart/form-data'*/
+		/*'Content-Type': 'application/x-www-form-urlencoded'*/
+		'Content-Type': 'multipart/form-data'
 		/* 'Content-Type':'application/Body-raw'*/
 	}
-}).then(res => res)}
+}).then(res => res.data)}
