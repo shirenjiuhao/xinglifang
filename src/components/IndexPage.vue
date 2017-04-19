@@ -70,7 +70,7 @@
 		margin: 10px 50px;
 		.container_title{height:40px;box-shadow: 0px 1px 4px 0px #F2F2F2;}
 		.container_content{padding: 35px 19px 0 19px} */
-		margin: 40px 50px;
+		margin: 40px 50px 60px;
 		line-height: 25px;
 		.button{
 			margin-bottom:40px;

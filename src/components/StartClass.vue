@@ -55,8 +55,8 @@
                                         <div class='rules_left' id='rules_left'></div>
                                         <div class='rules_right' id='rules_right'></div>
                                     </div>
-                                    <div class='rules_box_item' @change='startDarg'>
-                                        <span @drag='startDarg' class='rules_item' draggable='true' v-for='firstTitle in uploadList.firstTitle' v-text='firstTitle.name'></span>
+                                    <div class='rules_box_item' id='rules_box_item'>
+                                        <span draggable='true' class='rules_item' v-for='firstTitle in uploadList.firstTitle' v-text='firstTitle.name'></span> 
                                     </div>
                                 </div>
                                 <span class='rules_footer'>若存在学生缺考某些科目，请勿将“总分”作为分班规则。</span>
@@ -105,11 +105,11 @@
         methods:{
             missingExam(){
                  //window.location.href ="datademo/分班数据（示例1：有缺考）.xls"
-                 alert(1)
+                 window.open("/static/xls/分班数据（示例1：有缺考）.xls")
             },
             readyClass(){
-                alert(1)
                 //window.location.href ="datademo/分班数据（示例2：预设班级）.xls"
+                window.open("/static/xls/分班数据（示例2：预设班级）.xls")
             },
             onfile(){
                 document.getElementById('file_input').click();
@@ -133,50 +133,111 @@
                 form.append('fileNameEncode',encodeURI(document.getElementById('file_input').value))
                 uploadFile(form).then(res => {
                     console.log(res);
-                    this.uploadList = res;
-                    this.uploadListVisible = true;
-                    document.getElementById('file_input').value = '';
+                    if(res.result == 0){
+                        this.uploadList = res;
+                        this.uploadListVisible = true;
+                        document.getElementById('file_input').value = '';
+                    }else{
+                        this.$notify.error({
+                            title: '错误',
+                            message: '请选择正确的文件'
+                        });
+                    }
                 })
             },
             startClass(){
                 alert(1)
             },
             startDarg(){
-                let rules_item = document.getElementsByClassName('rules_item');
-                let rules_left = document.getElementById('rules_left')
-                let rules_right = document.getElementById('rules_right')
-                document.ondragover = function(e){e.preventDefault()}
-                document.ondrop = function(e){e.preventDefault()}
-                for (var i = rules_item.length - 1; i >= 0; i--) {
-                    rules_item[i].addEventListener('dragstart',function(ev){
-                        let dt = ev.dataTransfer
-                        dt.effectAllowed = 'move';
-                        dt.setData('text/html',this)
-                        console.log(dt)
-                    },false)
+                var isOverFlow = false;
+                var rules_box_item = document.getElementById('rules_box_item');
+                var rules_left = document.getElementById('rules_left');
+                var rules_right = document.getElementById('rules_right');
+                document.ondragover = function(ev){ev.preventDefault()}
+                document.ondrop = function(ev){ev.preventDefault()}
+                function getElem(id){
+                    return id.getElementsByClassName('rules_item')
+                }; 
+                function start(){
+                    if(rules_box_item.innerHTML!=''){
+                        let rules_item = getElem(rules_box_item);
+                        dragStart(rules_item)
+                    }
+                    if(rules_left.innerHTML!=''){
+                        let rules_item1 = getElem(rules_left);
+                        dragStart(rules_item1)
+                    }
+                    if(rules_right.innerHTML!=''){
+                        let rules_item2 = getElem(rules_right);
+                        dragStart(rules_item2)
+                    }
                 };
-                rules_left.addEventListener('dragend',function(ev){
-                    ev.preventDefault();
-                },false)
-                rules_right.addEventListener('dragend',function(ev){
-                    ev.preventDefault();
-                },false)
-                rules_right.addEventListener('drop',function(ev){
-                    let dt = ev.dataTransfer;
-                    let text = dt.getData('text/html')
-                    console.log(text)
-                    rules_right.innerHTML += text;
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                },false)
-                rules_left.addEventListener('drop',function(ev){
-                    let dt = ev.dataTransfer;
-                    let text = dt.getData('text/html')
-                    console.log(text)
-                    rules_left.innerHTML += text;
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                },false)
+                function dragStart(val){
+                    for (let i=0,n=val.length; i < n; i++) {
+                        val[i].ondragstart = function(ev){
+                            let dt = ev.dataTransfer
+                            dt.effectAllowed = 'move';
+                            dt.setData('text',ev.target.outerHTML)
+                            dt.setData('from',this.parentNode.className);
+                            dt.setData('fromChild',this.className);
+                            this.style.background = 'rgb(255, 140, 105)'
+                            return true
+                        }
+                        val[i].ondragend = function(ev){
+                            let eleDrag = ev.target
+                            if(eleDrag){
+                                if(isOverFlow){
+                                    eleDrag.parentNode.removeChild(eleDrag)
+                                }
+                            }
+                            this.style.background = 'transparent'
+                            ev.dataTransfer.clearData('text')
+                            eleDrag=null
+                            isOverFlow = false;
+                            return false
+                        }
+                    };
+                };
+                function enterover(){
+                    dragEnter(rules_left)
+                    dragEnter(rules_right)
+                    dragEnter(rules_box_item)
+                };
+                function dragEnter(val){
+                    val.ondragover=function(ev){
+                        this.style.background = 'rgb(253, 214, 203)'
+                        ev.preventDefault();
+                        return true
+                    }
+                    val.ondragleave=function(ev){
+                        this.style.background = '#fff'
+                        return true
+                    }
+                };
+                function Drop(val,call){
+                    val.ondrop=function(ev){
+                        let dt = ev.dataTransfer;
+                        let text = dt.getData('text')
+                        let from = dt.getData('from')
+                        let fromChild = dt.getData('fromChild')
+                        this.style.background = '#fff'
+                        if(from != ev.target.id && fromChild !=ev.target.className){
+                            isOverFlow =  true;
+                            val.innerHTML += text;
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            call();  
+                        }
+                    }
+                };
+                function endDrop(){
+                    Drop(rules_box_item,start);
+                    Drop(rules_right,start);
+                    Drop(rules_left,start);
+                };
+                start();
+                enterover();
+                endDrop();
             }
         },
     	mounted(){
@@ -186,13 +247,19 @@
                 this.token = user.token
             }
     	},
+        updated(){
+            if(this.uploadListVisible){
+                this.startDarg();
+            }
+        },
         watch:{
             uploadList(){
                 if(this.uploadList.length!=0){
                     return this.resultName = this.uploadList.requestName
                 }
                 else return this.resultName
-            }
+            },
+
         }
     }
 </script>
@@ -268,8 +335,10 @@
                             span{flex:1;text-align: center;border-bottom: 1px solid #e8e8e8;background: #ECFFF5;}
                             span:first-child{border-right:1px solid #e8e8e8;}
                         }
-                        .rules_box{display: flex;min-height:160px;
-                            div{flex:1;padding: 12px 20px 0 30px;border-bottom:1px solid #e8e8e8;}
+                        .rules_box{display: flex;min-height:160px;text-align: center;font-size: 12px;
+                            div{flex:1;padding: 12px 20px 0 30px;border-bottom:1px solid #e8e8e8;
+                                span{border:1px solid #2FD37D;padding:6px 12px;margin:0 10px 10px 0;float: left;color:#2FD37D;}
+                            }
                             div:first-child{border-right:1px solid #e8e8e8;}
                         }
                         .rules_box_item{padding:12px 25px;min-height:160px;text-align: center;font-size: 12px;
