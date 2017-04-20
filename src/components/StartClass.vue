@@ -7,7 +7,7 @@
                 <div class='body_title'><span>1.上传分班数据</span></div>
                 <div class='body_fileLoad'>
                     <input type="file" id='file_input' @change='filesUpload()'>
-                    <el-button type="success" @click='onfile'>上传</el-button>
+                    <el-button type="success" v-loading.fullscreen='upLoading' @click='onfile'>上传</el-button>
                     <div class="body_fileLoad_text"><span>如需指定某些学生到某班，请将包含班级信息的数据列名称修改为“班级”。</span>
                     <p>上传文件为Excel 97-2003格式</p>
                     </div>
@@ -99,7 +99,8 @@
                 token:'',//用户的token
                 uploadList:'',//上传文件的数据
                 uploadListVisible:false,//是否显上传后的文件内容
-                resultName:''//本次活动的名字
+                resultName:'',//本次活动的名字
+                upLoading:false
     		}
     	},
         methods:{
@@ -124,6 +125,7 @@
                     });
                     return;
                 }
+                this.upLoading = true
                 let form = new FormData();
                 if(file){
                     form.append("file", file)
@@ -137,7 +139,9 @@
                         this.uploadList = res;
                         this.uploadListVisible = true;
                         document.getElementById('file_input').value = '';
+                        this.upLoading = false
                     }else{
+                        this.upLoading = false
                         this.$notify.error({
                             title: '错误',
                             message: '请选择正确的文件'
