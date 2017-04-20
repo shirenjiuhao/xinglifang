@@ -23,13 +23,21 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8080,
+    port: 8000,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+        '/divideclass':{
+            target: 'http://wzfx.k12media.cn:8067',
+            changeOrigin:true,
+            pathRewrite:{
+                '^/divideclass':'/divideclass'
+            }
+        }
+    },
     // context:[
-    //     'divideclass/'
+    //     '/divideclass'
     // ],
     // proxypath:'http://192.168.11.25:8081',
     // CSS Sourcemaps off by default because relative paths are "buggy"

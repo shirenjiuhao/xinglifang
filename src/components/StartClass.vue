@@ -176,7 +176,7 @@
                     for (let i=0,n=val.length; i < n; i++) {
                         val[i].ondragstart = function(ev){
                             let dt = ev.dataTransfer
-                            dt.effectAllowed = 'move';
+                            dt.effectAllowed = 'copy';
                             dt.setData('text',ev.target.outerHTML)
                             dt.setData('from',this.parentNode.className);
                             dt.setData('fromChild',this.className);

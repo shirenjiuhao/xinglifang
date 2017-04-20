@@ -12,7 +12,7 @@
 		  <el-form-item>
 		    <el-button class='loginBtn' type="primary" @click="submitLogin('loginForm2')" :loading="loading">登录</el-button>
 		  </el-form-item>
-		  <div class="regist">还没有账号，请<a href="/">注册</a></div>
+		  <div class="regist">还没有账号，请<span @click='isRegister'>注册</span></div>
 		</el-form>
 	</section>
 </template>
@@ -48,6 +48,7 @@
 		            	password: this.loginForm2.pass
 		            }
 		            loginUser(params).then(res => {
+		            	this.loading = false
 		            	console.log(res)
 		            	if(res.result !=0){
 		            		this.$notify({
@@ -71,6 +72,9 @@
 				if(!this.resource){
 					localStorage.clear();
 				}
+			},
+			isRegister(){
+				this.$emit('isRegister',false)
 			}
 		},
 		mounted(){
@@ -96,8 +100,9 @@
 			}
 		}
 		.regist{
-			a{
+			span{
 				color:#003400;
+				cursor: pointer;
 			}
 		}
 	}

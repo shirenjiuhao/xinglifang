@@ -13,27 +13,15 @@
 	        </div>
 	      </nav>
 	    </header>
-	    <!--登录窗口-->
-	    <el-dialog v-model="loginPage" size="tiny" top='20%' class='loginWin'>
-   		  <slot name='login'></slot>
-   		</el-dialog>
-		<!--注册窗口-->
-		<el-dialog title="注册" v-model="registPage" size="tiny">
-			<Register></Register>
-		</el-dialog>
 	</section>
 </template>
 <script>
     import { logoutUser } from '../../api/api'
-	import Register from './Register'
 	export default {
-	  components:{ Register },
 	  props:['isLogins'],
 	  data(){ 
 		  return {
-		    username: '',
-		   	loginPage:false,//是否显示登录界面
-		   	registPage:false,//是否显示注册页面
+		    username: ''
 		  }
 		},
 		methods: {
@@ -46,14 +34,11 @@
 			})
 		  },
 		  login(){//显示登录界面
-		  	this.loginPage = true;
+		  	this.$emit('login-true',true)
 		  },
 		  regist(){//显示注册界面
-		  	this.registPage = true
-		  },
-		  resetForm(formName) {//重置表单
-	        this.$refs[formName].resetFields();
-	      }
+		  	this.$emit('regist-true',true)
+		  }
 		},
 		mounted() {
 			let user = localStorage.getItem('user');
